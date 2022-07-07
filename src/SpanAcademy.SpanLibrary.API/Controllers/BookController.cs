@@ -19,14 +19,18 @@ namespace SpanAcademy.SpanLibrary.API.Controllers
         }
 
         [HttpGet(Name = "GetBooks")]
-        public async Task<IEnumerable<Book>> GetBooks(CancellationToken cancellationToken)
+        public async Task<IEnumerable<Book>> GetBooks([FromQuery]bool getOnlyActive, CancellationToken cancellationToken)
         {
             _logger.LogInformation("Fetching books");
 
             IQueryable<Book> booksQuery = _dbContext.Books.AsNoTracking();
 
-            var books = await booksQuery.Where(book => book.Active!.Value)
-                .OrderBy(book => book.Title)
+            if(getOnlyActive)
+            {
+                booksQuery = booksQuery.Where(book => book.Active!.Value);
+            }
+
+            var books = await booksQuery.OrderBy(book => book.Title)
                 .ToArrayAsync(cancellationToken);
 
             return books;
