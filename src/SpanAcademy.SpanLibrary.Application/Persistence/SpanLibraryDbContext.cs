@@ -1,9 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SpanAcademy.SpanLibrary.API.Entities;
+using SpanAcademy.SpanLibrary.Domain;
 
-#nullable disable
-
-namespace SpanAcademy.SpanLibrary.API
+namespace SpanAcademy.SpanLibrary.Application.Persistence
 {
     public class SpanLibraryDbContext : DbContext
     {

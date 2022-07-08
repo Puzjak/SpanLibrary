@@ -2,20 +2,18 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using SpanAcademy.SpanLibrary.API;
+using SpanAcademy.SpanLibrary.Application.Persistence;
 
 #nullable disable
 
-namespace SpanAcademy.SpanLibrary.API.Migrations
+namespace SpanAcademy.SpanLibrary.Application.Persistence.Migrations
 {
     [DbContext(typeof(SpanLibraryDbContext))]
     [Migration("20220707061811_Initial_Migration")]
     partial class Initial_Migration
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel (ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

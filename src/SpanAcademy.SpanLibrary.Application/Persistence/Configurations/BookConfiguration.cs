@@ -1,26 +1,10 @@
-﻿#nullable disable
-
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using SpanAcademy.SpanLibrary.API.Entities.Base;
+using SpanAcademy.SpanLibrary.Domain;
 
-namespace SpanAcademy.SpanLibrary.API.Entities
+namespace SpanAcademy.SpanLibrary.Application.Persistence.Configurations
 {
-    public class Book : BaseEntity
-    {
-        public string Title { get; set; }
-        public int AuthorId { get; set; }
-        public int PublisherId { get; set; }
-        public short YearPublished { get; set; }
-        public string ISBN { get; set; }
-        public string Description { get; set; }
-        public bool? Active { get; set; }
-
-        public virtual Author Author { get; set; }
-        public virtual Publisher Publisher { get; set; }
-    }
-
-    public class BookEntityTypeConfiguration : IEntityTypeConfiguration<Book>
+    internal class BookEntityTypeConfiguration : IEntityTypeConfiguration<Book>
     {
         public void Configure(EntityTypeBuilder<Book> builder)
         {

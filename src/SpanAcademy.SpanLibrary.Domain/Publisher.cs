@@ -1,9 +1,7 @@
-﻿using SpanAcademy.SpanLibrary.API.Entities.Base;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using SpanAcademy.SpanLibrary.Domain.Base;
 
-namespace SpanAcademy.SpanLibrary.API.Entities
-{
-    [Table(nameof(Publisher))]
+namespace SpanAcademy.SpanLibrary.Domain
+{    
     public class Publisher : BaseCodebookEntity
     {
         public virtual ICollection<Book> Books { get; set; }

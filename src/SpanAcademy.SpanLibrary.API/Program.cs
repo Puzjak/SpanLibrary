@@ -1,5 +1,4 @@
-using Microsoft.EntityFrameworkCore;
-using SpanAcademy.SpanLibrary.API;
+using SpanAcademy.SpanLibrary.Application;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,10 +8,7 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddDbContext<SpanLibraryDbContext>(options =>
-{
-    options.UseSqlServer(builder.Configuration.GetConnectionString("SpanLibraryDb"));
-});
+builder.Services.AddApplication(builder.Configuration);
 
 var app = builder.Build();
 

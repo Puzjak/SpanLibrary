@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using SpanAcademy.SpanLibrary.API.Entities;
+using SpanAcademy.SpanLibrary.Application.Books;
+using SpanAcademy.SpanLibrary.Application.Books.Models;
 
 namespace SpanAcademy.SpanLibrary.API.Controllers
 {
@@ -9,31 +9,20 @@ namespace SpanAcademy.SpanLibrary.API.Controllers
     public class BookController : ControllerBase
     {
         private readonly ILogger<BookController> _logger;
-        private readonly SpanLibraryDbContext _dbContext;
+        private readonly IBookService _bookService;
 
-        public BookController(ILogger<BookController> logger,
-            SpanLibraryDbContext dbContext)
+        public BookController(ILogger<BookController> logger, IBookService bookService)
         {
             _logger = logger;
-            _dbContext = dbContext;
+            _bookService = bookService;
         }
 
         [HttpGet(Name = "GetBooks")]
-        public async Task<IEnumerable<Book>> GetBooks([FromQuery]bool getOnlyActive, CancellationToken cancellationToken)
+        public async Task<IReadOnlyList<BookDto>> GetBooks([FromQuery]bool getOnlyActive, CancellationToken cancellationToken)
         {
             _logger.LogInformation("Fetching books");
 
-            IQueryable<Book> booksQuery = _dbContext.Books.AsNoTracking();
-
-            if(getOnlyActive)
-            {
-                booksQuery = booksQuery.Where(book => book.Active!.Value);
-            }
-
-            var books = await booksQuery.OrderBy(book => book.Title)
-                .ToArrayAsync(cancellationToken);
-
-            return books;
+            return await _bookService.GetBooks(getOnlyActive, cancellationToken);
         }
     }
 }

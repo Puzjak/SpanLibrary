@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace SpanAcademy.SpanLibrary.API.Migrations
+namespace SpanAcademy.SpanLibrary.Application.Persistence.Migrations
 {
     public partial class Initial_Migration : Migration
     {

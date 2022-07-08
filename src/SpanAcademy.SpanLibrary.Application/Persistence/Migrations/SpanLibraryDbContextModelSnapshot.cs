@@ -4,11 +4,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using SpanAcademy.SpanLibrary.API;
 
 #nullable disable
 
-namespace SpanAcademy.SpanLibrary.API.Migrations
+namespace SpanAcademy.SpanLibrary.Application.Persistence.Migrations
 {
     [DbContext(typeof(SpanLibraryDbContext))]
     partial class SpanLibraryDbContextModelSnapshot : ModelSnapshot
