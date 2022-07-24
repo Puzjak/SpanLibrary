@@ -21,6 +21,7 @@ namespace SpanAcademy.SpanLibrary.Application
 
             services.AddScoped<IValidator<CreateBookDto>, CreateBookValidator>();
             services.AddScoped<IValidator<UpdateBookDto>, UpdateBookValidator>();
+            services.AddScoped<IValidator<GetBooksDto>, GetBooksDtoValidator>();
 
             services.AddDbContext<SpanLibraryDbContext>(options =>
             {

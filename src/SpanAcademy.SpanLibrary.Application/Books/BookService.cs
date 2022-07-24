@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SpanAcademy.SpanLibrary.Application.Books.Models;
+using SpanAcademy.SpanLibrary.Application.Collections;
 using SpanAcademy.SpanLibrary.Application.Persistence;
 using SpanAcademy.SpanLibrary.Domain;
 
@@ -51,16 +52,18 @@ namespace SpanAcademy.SpanLibrary.Application.Books
             return true;
         }
 
-        public async Task<IReadOnlyList<BookDto>> GetBooks(bool onlyActive, CancellationToken token)
+        public async Task<IPagedList<BookDto>> GetBooks(GetBooksDto getBooksDto, CancellationToken token)
         {
+            ArgumentNullException.ThrowIfNull(getBooksDto, nameof(getBooksDto));
+
             IQueryable<Book> booksQuery = _context.Books.AsNoTracking();
 
-            if (onlyActive)
-            {
-                booksQuery = booksQuery.Where(book => book.Active!.Value);
-            }
+            booksQuery = ApplyFilters(getBooksDto, booksQuery);
 
-            var books = await booksQuery.OrderBy(book => book.Title)
+            int totalCount = await booksQuery.CountAsync(token);
+            booksQuery = ApplySortingAndPaging(getBooksDto, booksQuery);
+
+            var books = await booksQuery
                 .Select(book => new BookDto
                 {
                     Id = book.Id,
@@ -74,7 +77,50 @@ namespace SpanAcademy.SpanLibrary.Application.Books
                 })
                 .ToListAsync(cancellationToken: token);
 
-            return books;
+            return new PagedList<BookDto>(books, getBooksDto.Page ?? 1, getBooksDto.PageSize ?? int.MaxValue, totalCount);
+        }
+
+        private static IQueryable<Book> ApplySortingAndPaging(GetBooksDto getBooksDto, IQueryable<Book> booksQuery)
+        {
+            booksQuery = getBooksDto.SortOrder switch
+            {
+                "asc" => booksQuery.OrderBy(x => x.Title),
+                "desc" => booksQuery.OrderByDescending(x => x.Title),
+                _ => booksQuery.OrderByDescending(x => x.Id)
+            };
+
+            if(getBooksDto.Page.HasValue && getBooksDto.PageSize.HasValue)
+            {
+                booksQuery = booksQuery.Skip((getBooksDto.Page.Value - 1) * getBooksDto.PageSize.Value)
+                    .Take(getBooksDto.PageSize.Value);
+            }
+
+            return booksQuery;
+        }
+
+        private static IQueryable<Book> ApplyFilters(GetBooksDto getBooksDto, IQueryable<Book> booksQuery)
+        {
+            if (getBooksDto.GetOnlyActive)
+            {
+                booksQuery = booksQuery.Where(book => book.Active!.Value);
+            }
+
+            if (getBooksDto.AuthorId.HasValue)
+            {
+                booksQuery = booksQuery.Where(book => book.AuthorId == getBooksDto.AuthorId.Value);
+            }
+
+            if (getBooksDto.PublisherId.HasValue)
+            {
+                booksQuery = booksQuery.Where(book => book.PublisherId == getBooksDto.PublisherId.Value);
+            }
+
+            if (!string.IsNullOrWhiteSpace(getBooksDto.SearchValue))
+            {
+                booksQuery = booksQuery.Where(book => book.Title.StartsWith(getBooksDto.SearchValue) || book.ISBN.StartsWith(getBooksDto.SearchValue));
+            }
+
+            return booksQuery;
         }
 
         public async Task<BookDto> GetById(int id, CancellationToken token)

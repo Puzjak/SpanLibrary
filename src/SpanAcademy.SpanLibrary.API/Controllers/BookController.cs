@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
+using SpanAcademy.SpanLibrary.API.Models;
 using SpanAcademy.SpanLibrary.Application.Books;
 using SpanAcademy.SpanLibrary.Application.Books.Models;
+using SpanAcademy.SpanLibrary.Application.Collections;
 
 namespace SpanAcademy.SpanLibrary.API.Controllers
 {
@@ -18,11 +20,13 @@ namespace SpanAcademy.SpanLibrary.API.Controllers
         }
 
         [HttpGet(Name = nameof(GetBooks))]
-        public async Task<IReadOnlyList<BookDto>> GetBooks([FromQuery] bool getOnlyActive, CancellationToken cancellationToken)
+        public async Task<GetBooksResponseModel> GetBooks([FromQuery] GetBooksDto model, CancellationToken cancellationToken)
         {
             _logger.LogInformation("Fetching books");
 
-            return await _bookService.GetBooks(getOnlyActive, cancellationToken);
+            var books = await _bookService.GetBooks(model, cancellationToken);
+
+            return new GetBooksResponseModel(books);
         }
 
         [HttpGet("{id}", Name = nameof(GetBook))]
