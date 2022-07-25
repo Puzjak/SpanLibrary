@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using SpanAcademy.SpanLibrary.Application.Books.Models;
 using SpanAcademy.SpanLibrary.Application.Collections;
 using SpanAcademy.SpanLibrary.Application.Persistence;
@@ -9,10 +10,12 @@ namespace SpanAcademy.SpanLibrary.Application.Books
     public class BookService : IBookService
     {
         private readonly SpanLibraryDbContext _context;
+        private readonly ILogger<BookService> _logger;
 
-        public BookService(SpanLibraryDbContext context)
+        public BookService(SpanLibraryDbContext context, ILogger<BookService> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         public async Task<bool> BookExists(int id, CancellationToken token)
@@ -22,6 +25,7 @@ namespace SpanAcademy.SpanLibrary.Application.Books
 
         public async Task<int> CreateBook(CreateBookDto book, CancellationToken token)
         {
+            book = null;
             ArgumentNullException.ThrowIfNull(book, nameof(book));
             Book bookToCreate = new()
             {
@@ -144,10 +148,15 @@ namespace SpanAcademy.SpanLibrary.Application.Books
         {
             ArgumentNullException.ThrowIfNull(book, nameof(book));
 
+            _logger.LogInformation("Fetching book from DB");
+
             Book bookToUpdate = await _context.Books.Where(x => x.Id == book.Id).FirstOrDefaultAsync(token);
 
             if (bookToUpdate is null)
+            {
+                _logger.LogError("Book was not found");
                 throw new NullReferenceException($"Book with id '{book.Id}' does not exist");
+            }
 
             bookToUpdate.AuthorId = book.AuthorId;
             bookToUpdate.Description = book.Description;
@@ -155,6 +164,8 @@ namespace SpanAcademy.SpanLibrary.Application.Books
             bookToUpdate.PublisherId = book.PublisherId;
             bookToUpdate.Title = book.Title;
             bookToUpdate.YearPublished = book.YearPublished;
+
+            _logger.LogInformation("Updating book in DB");
 
             await _context.SaveChangesAsync(token);
         }

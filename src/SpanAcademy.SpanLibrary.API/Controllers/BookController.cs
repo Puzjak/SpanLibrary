@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Serilog.Context;
 using SpanAcademy.SpanLibrary.API.Models;
 using SpanAcademy.SpanLibrary.Application.Books;
 using SpanAcademy.SpanLibrary.Application.Books.Models;
@@ -52,7 +53,8 @@ namespace SpanAcademy.SpanLibrary.API.Controllers
         [HttpPut(Name = nameof(UpdateBook))]
         public async Task<IActionResult> UpdateBook([FromBody] UpdateBookDto model, CancellationToken cancellationToken)
         {
-            _logger.LogInformation("Updating book with id {BookId}", model.Id);
+            using var _bookId = LogContext.PushProperty("BookId", model.Id);
+            _logger.LogInformation("Updating book");
 
             await _bookService.UpdateBook(model, cancellationToken);
 
