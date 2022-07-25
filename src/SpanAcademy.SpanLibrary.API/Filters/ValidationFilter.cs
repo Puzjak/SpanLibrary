@@ -21,7 +21,6 @@ namespace SpanAcademy.SpanLibrary.API.Filters
 
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
-            using var _logContext = LogContext.PushProperty("testaaaa", "aham vrijednost");
             foreach (var actionArgument in context.ActionArguments)
             {
                 Type actionArgumentType = actionArgument.Value?.GetType();
