@@ -5,9 +5,11 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpanAcademy.SpanLibrary.API", "src\SpanAcademy.SpanLibrary.API\SpanAcademy.SpanLibrary.API.csproj", "{9D41E0FB-2E4D-43F8-92DF-2D557FCC94FA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpanAcademy.SpanLibrary.Application", "src\SpanAcademy.SpanLibrary.Application\SpanAcademy.SpanLibrary.Application.csproj", "{D3E98B29-5ADA-4BA6-861E-8A9A0EA48D2D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpanAcademy.SpanLibrary.Application", "src\SpanAcademy.SpanLibrary.Application\SpanAcademy.SpanLibrary.Application.csproj", "{D3E98B29-5ADA-4BA6-861E-8A9A0EA48D2D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpanAcademy.SpanLibrary.Domain", "src\SpanAcademy.SpanLibrary.Domain\SpanAcademy.SpanLibrary.Domain.csproj", "{F0E6940B-C304-466E-AE0E-41381D55BCF9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpanAcademy.SpanLibrary.Domain", "src\SpanAcademy.SpanLibrary.Domain\SpanAcademy.SpanLibrary.Domain.csproj", "{F0E6940B-C304-466E-AE0E-41381D55BCF9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpanAcademy.SpanLibrary.Web", "src\SpanAcademy.SpanLibrary.Web\SpanAcademy.SpanLibrary.Web.csproj", "{34FA07E4-E0EF-4CD5-B854-76BA8890607E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{F0E6940B-C304-466E-AE0E-41381D55BCF9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F0E6940B-C304-466E-AE0E-41381D55BCF9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F0E6940B-C304-466E-AE0E-41381D55BCF9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{34FA07E4-E0EF-4CD5-B854-76BA8890607E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{34FA07E4-E0EF-4CD5-B854-76BA8890607E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{34FA07E4-E0EF-4CD5-B854-76BA8890607E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{34FA07E4-E0EF-4CD5-B854-76BA8890607E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
