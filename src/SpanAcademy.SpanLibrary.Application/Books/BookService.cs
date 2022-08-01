@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using SpanAcademy.SpanLibrary.Application.Books.Models;
+using SpanAcademy.SpanLibrary.Application.Collections;
 using SpanAcademy.SpanLibrary.Application.Persistence;
 using SpanAcademy.SpanLibrary.Domain;
 
@@ -8,23 +10,67 @@ namespace SpanAcademy.SpanLibrary.Application.Books
     public class BookService : IBookService
     {
         private readonly SpanLibraryDbContext _context;
+        private readonly ILogger<BookService> _logger;
 
-        public BookService(SpanLibraryDbContext context)
+        public BookService(SpanLibraryDbContext context, ILogger<BookService> logger)
         {
             _context = context;
+            _logger = logger;
         }
-        public async Task<IReadOnlyList<BookDto>> GetBooks(bool onlyActive, CancellationToken token)
+
+        public async Task<bool> BookExists(int id, CancellationToken token)
         {
+            return await _context.Books.Where(book => book.Id == id && book.Active == true).AnyAsync(token);
+        }
+
+        public async Task<int> CreateBook(CreateBookDto book, CancellationToken token)
+        {
+            book = null;
+            ArgumentNullException.ThrowIfNull(book, nameof(book));
+            Book bookToCreate = new()
+            {
+                Active = true,
+                AuthorId = book.AuthorId,
+                Description = book.Description,
+                ISBN = book.ISBN,
+                PublisherId = book.PublisherId,
+                Title = book.Title,
+                YearPublished = book.YearPublished,
+            };
+
+            _context.Books.Add(bookToCreate);
+            await _context.SaveChangesAsync(token);
+
+            return bookToCreate.Id;
+        }
+
+        public async Task<bool> DeleteBook(int id, CancellationToken token)
+        {
+            Book bookToDelete = await _context.Books.Where(book => book.Id == id && book.Active == true).FirstOrDefaultAsync(token);
+            if (bookToDelete is null)
+                return false;
+
+            bookToDelete.Active = false;
+            await _context.SaveChangesAsync(token);
+
+            return true;
+        }
+
+        public async Task<IPagedList<BookDto>> GetBooks(GetBooksDto getBooksDto, CancellationToken token)
+        {
+            ArgumentNullException.ThrowIfNull(getBooksDto, nameof(getBooksDto));
+
             IQueryable<Book> booksQuery = _context.Books.AsNoTracking();
 
-            if (onlyActive)
-            {
-                booksQuery = booksQuery.Where(book => book.Active!.Value);
-            }
+            booksQuery = ApplyFilters(getBooksDto, booksQuery);
 
-            var books = await booksQuery.OrderBy(book => book.Title)
+            int totalCount = await booksQuery.CountAsync(token);
+            booksQuery = ApplySortingAndPaging(getBooksDto, booksQuery);
+
+            var books = await booksQuery
                 .Select(book => new BookDto
                 {
+                    Id = book.Id,
                     Active = book.Active,
                     Author = book.Author.Name,
                     Description = book.Description,
@@ -33,9 +79,95 @@ namespace SpanAcademy.SpanLibrary.Application.Books
                     Title = book.Title,
                     YearPublished = book.YearPublished
                 })
-                .ToListAsync();
+                .ToListAsync(cancellationToken: token);
 
-            return books;
+            return new PagedList<BookDto>(books, getBooksDto.Page ?? 1, getBooksDto.PageSize ?? int.MaxValue, totalCount);
+        }
+
+        private static IQueryable<Book> ApplySortingAndPaging(GetBooksDto getBooksDto, IQueryable<Book> booksQuery)
+        {
+            booksQuery = getBooksDto.SortOrder switch
+            {
+                "asc" => booksQuery.OrderBy(x => x.Title),
+                "desc" => booksQuery.OrderByDescending(x => x.Title),
+                _ => booksQuery.OrderByDescending(x => x.Id)
+            };
+
+            if(getBooksDto.Page.HasValue && getBooksDto.PageSize.HasValue)
+            {
+                booksQuery = booksQuery.Skip((getBooksDto.Page.Value - 1) * getBooksDto.PageSize.Value)
+                    .Take(getBooksDto.PageSize.Value);
+            }
+
+            return booksQuery;
+        }
+
+        private static IQueryable<Book> ApplyFilters(GetBooksDto getBooksDto, IQueryable<Book> booksQuery)
+        {
+            if (getBooksDto.GetOnlyActive)
+            {
+                booksQuery = booksQuery.Where(book => book.Active!.Value);
+            }
+
+            if (getBooksDto.AuthorId.HasValue)
+            {
+                booksQuery = booksQuery.Where(book => book.AuthorId == getBooksDto.AuthorId.Value);
+            }
+
+            if (getBooksDto.PublisherId.HasValue)
+            {
+                booksQuery = booksQuery.Where(book => book.PublisherId == getBooksDto.PublisherId.Value);
+            }
+
+            if (!string.IsNullOrWhiteSpace(getBooksDto.SearchValue))
+            {
+                booksQuery = booksQuery.Where(book => book.Title.StartsWith(getBooksDto.SearchValue) || book.ISBN.StartsWith(getBooksDto.SearchValue));
+            }
+
+            return booksQuery;
+        }
+
+        public async Task<BookDto> GetById(int id, CancellationToken token)
+        {
+            return await _context.Books.Where(book => book.Id == id)
+                .Select(book => new BookDto
+                {
+                    Active = book.Active,
+                    Author = book.Author.Name,
+                    Description = book.Description,
+                    Id = book.Id,
+                    ISBN = book.ISBN,
+                    Publisher = book.Publisher.Name,
+                    Title = book.Title,
+                    YearPublished = book.YearPublished,
+                })
+                .FirstOrDefaultAsync(token);
+        }
+
+        public async Task UpdateBook(UpdateBookDto book, CancellationToken token)
+        {
+            ArgumentNullException.ThrowIfNull(book, nameof(book));
+
+            _logger.LogInformation("Fetching book from DB");
+
+            Book bookToUpdate = await _context.Books.Where(x => x.Id == book.Id).FirstOrDefaultAsync(token);
+
+            if (bookToUpdate is null)
+            {
+                _logger.LogError("Book was not found");
+                throw new NullReferenceException($"Book with id '{book.Id}' does not exist");
+            }
+
+            bookToUpdate.AuthorId = book.AuthorId;
+            bookToUpdate.Description = book.Description;
+            bookToUpdate.ISBN = book.ISBN;
+            bookToUpdate.PublisherId = book.PublisherId;
+            bookToUpdate.Title = book.Title;
+            bookToUpdate.YearPublished = book.YearPublished;
+
+            _logger.LogInformation("Updating book in DB");
+
+            await _context.SaveChangesAsync(token);
         }
     }
 }
