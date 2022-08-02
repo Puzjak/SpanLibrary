@@ -9,6 +9,8 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSelect } from '@angular/material/select';
 import { MatSort } from '@angular/material/sort';
 import { debounceTime, forkJoin, fromEvent } from 'rxjs';
+import { ConfirmDialogService } from '../shared/services/confirm-dialog.service';
+import { BookDto } from './models/bookDto';
 import { DropdownDto } from './models/dropdownDto';
 import { AuthorService } from './services/author.service';
 import { BookDataSourceService } from './services/book-data-source.service';
@@ -40,7 +42,8 @@ export class BooksComponent implements OnInit, AfterViewInit {
     private bookService: BookService,
     private authorService: AuthorService,
     private publisherService: PublisherService,
-    public dataSource: BookDataSourceService
+    public dataSource: BookDataSourceService,
+    private confirmDialogService: ConfirmDialogService
   ) {}
 
   ngOnInit(): void {
@@ -101,5 +104,18 @@ export class BooksComponent implements OnInit, AfterViewInit {
       this.authors = authors;
       this.publishers = publishers;
     });
+  }
+
+  onDeleteClick(book: BookDto) {
+    this.confirmDialogService.open(
+      'Deleting a book',
+      'Are you sure that you want to delete this book?',
+      () => {
+        this.bookService.deleteBook(book.id).subscribe((_) => {
+          console.log('Book deleted');
+          this.resetPaginationAndGetBooks();
+        });
+      }
+    );
   }
 }
