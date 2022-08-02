@@ -25,7 +25,6 @@ namespace SpanAcademy.SpanLibrary.Application.Books
 
         public async Task<int> CreateBook(CreateBookDto book, CancellationToken token)
         {
-            book = null;
             ArgumentNullException.ThrowIfNull(book, nameof(book));
             Book bookToCreate = new()
             {
