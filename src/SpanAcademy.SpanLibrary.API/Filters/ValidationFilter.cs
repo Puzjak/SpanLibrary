@@ -10,10 +10,10 @@ namespace SpanAcademy.SpanLibrary.API.Filters
     public class ValidationFilter : IAsyncActionFilter
     {
         private readonly IServiceProvider _serviceProvider;
-        private readonly ILogger _logger;
+        private readonly ILogger<ValidationFilter> _logger;
 
         public ValidationFilter(IServiceProvider serviceProvider,
-            ILogger logger)
+            ILogger<ValidationFilter> logger)
         {
             _serviceProvider = serviceProvider;
             _logger = logger;

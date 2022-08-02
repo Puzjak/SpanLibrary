@@ -1,9 +1,9 @@
-import { Injectable } from '@angular/core';
-import { BookDto } from '../models/bookDto';
 import { CollectionViewer, DataSource } from '@angular/cdk/collections';
+import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { BookService } from './book.service';
+import { BookDto } from '../models/bookDto';
 import { BooksGridInfoDto } from '../models/booksGridInfoDto';
+import { BookService } from './book.service';
 
 @Injectable({
   providedIn: 'root',
@@ -34,8 +34,8 @@ export class BookDataSourceService implements DataSource<BookDto> {
     searchValue: string = '',
     page: number = 1,
     pageSize: number = 10,
-    authorId: number = -1,
-    publisherId: number = -1
+    authorId: number,
+    publisherId: number
   ): void {
     this.bookService
       .getBooks(sortOrder, searchValue, page, pageSize, authorId, publisherId)

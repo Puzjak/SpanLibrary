@@ -3,15 +3,15 @@
 // ----------------------------------------------
 export interface IDropdownDto {
   id: number;
-  value: string;
+  name: string;
 }
 
 export class DropdownDto implements IDropdownDto {
   public id: number;
-  public value: string;
+  public name: string;
 
   constructor(id: number, value: string) {
     this.id = id;
-    this.value = value;
+    this.name = value;
   }
 }
