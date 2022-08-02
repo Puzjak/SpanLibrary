@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { BooksGridInfoDto } from '../models/booksGridInfoDto';
+import { CreateBookModel } from '../models/create-book.model';
 import { GetBooksDto } from '../models/getBooksDto';
 
 @Injectable({
@@ -35,5 +36,9 @@ export class BookService {
     return this.httpClient.get<BooksGridInfoDto>(`${this.serviceBaseUrl}`, {
       params: params,
     });
+  }
+
+  createBook(book: CreateBookModel) {
+    return this.httpClient.post<void>(`${this.serviceBaseUrl}`, book);
   }
 }

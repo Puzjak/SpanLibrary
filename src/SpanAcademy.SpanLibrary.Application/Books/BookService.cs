@@ -23,8 +23,8 @@ namespace SpanAcademy.SpanLibrary.Application.Books
             return await _context.Books.Where(book => book.Id == id && book.Active == true).AnyAsync(token);
         }
 
-        public async Task<int> CreateBook(CreateBookDto book, CancellationToken token)
-        {            
+        public async Task<int> CreateBook(CreateBookDto book, CancellationToken token)        
+        {
             ArgumentNullException.ThrowIfNull(book, nameof(book));
             Book bookToCreate = new()
             {

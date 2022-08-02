@@ -1,0 +1,106 @@
+<mat-card class="mt-1 mb-1 c-mat-card_smaller-container">
+  <div role="presentation">
+    <h1 class="title mb-5 d-inline-block">
+      <a
+        mat-icon-button
+        routerLink=".."
+        aria-label="Example icon button with a vertical three dot icon"
+      >
+        <mat-icon class="mat-icon l-title_back-arrow"
+          >keyboard_backspace</mat-icon
+        >
+      </a>
+      Create a book
+    </h1>
+  </div>
+
+  <form *ngIf="fg" [formGroup]="fg" class="mb-2">
+    <mat-form-field style="width: 100%" appearance="outline">
+      <mat-label> Title </mat-label>
+      <input matInput type="text" formControlName="title" trim="blur" />
+      <mat-error>
+        {{ getErrorMessage(fg.controls["title"]) }}
+      </mat-error>
+    </mat-form-field>
+
+    <div role="presentation" style="display: flex; justify-content: end">
+      <mat-form-field
+        style="width: 100%; margin-right: 1rem"
+        appearance="outline"
+      >
+        <mat-label> Author </mat-label>
+        <mat-select formControlName="authorId">
+          <mat-option *ngFor="let author of authors" [value]="author.id">
+            {{ author.name }}
+          </mat-option>
+        </mat-select>
+        <mat-error>
+          {{ getErrorMessage(fg.controls.title) }}
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field style="width: 100%" appearance="outline">
+        <mat-label> Publisher </mat-label>
+        <mat-select formControlName="publisherId">
+          <mat-option
+            *ngFor="let publisher of publishers"
+            [value]="publisher.id"
+          >
+            {{ publisher.name }}
+          </mat-option>
+        </mat-select>
+        <mat-error>
+          {{ getErrorMessage(fg.controls.publisherId) }}
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div role="presentation" style="display: flex; justify-content: end">
+      <mat-form-field
+        style="width: 100%; margin-right: 1rem"
+        appearance="outline"
+      >
+        <mat-label> Year published </mat-label>
+        <input
+          matInput
+          type="number"
+          formControlName="yearPublished"
+          min="0"
+          max="3000"
+          trim="blur"
+        />
+        <mat-error>
+          {{ getErrorMessage(fg.controls.yearPublished) }}
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field style="width: 100%" appearance="outline">
+        <mat-label> ISBN </mat-label>
+        <input matInput type="text" formControlName="isbn" trim="blur" />
+        <mat-error>
+          {{ getErrorMessage(fg.controls.isbn) }}
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <mat-form-field style="width: 100%" appearance="outline">
+      <mat-label> Description </mat-label>
+      <textarea
+        matInput
+        formControlName="description"
+        rows="10"
+        trim="blur"
+      ></textarea>
+      <mat-error>
+        {{ getErrorMessage(fg.controls.description) }}
+      </mat-error>
+    </mat-form-field>
+
+    <div role="presentation" style="display: flex; justify-content: end">
+      <a mat-raised-button routerLink=".." style="margin-right: 1rem">
+        Cancel
+      </a>
+      <button mat-raised-button color="primary" (click)="onCreateBookClick()">
+        Save book
+      </button>
+    </div>
+  </form>
+</mat-card>
