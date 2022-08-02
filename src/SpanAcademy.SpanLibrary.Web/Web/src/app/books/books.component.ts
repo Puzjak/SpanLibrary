@@ -8,10 +8,12 @@ import {
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSelect } from '@angular/material/select';
 import { MatSort } from '@angular/material/sort';
-import { fromEvent, debounceTime } from 'rxjs';
-import { BookCodebookDto } from './models/bookCodebookDto';
+import { debounceTime, forkJoin, fromEvent } from 'rxjs';
+import { DropdownDto } from './models/dropdownDto';
+import { AuthorService } from './services/author.service';
 import { BookDataSourceService } from './services/book-data-source.service';
 import { BookService } from './services/book.service';
+import { PublisherService } from './services/publisher.service';
 
 @Component({
   selector: 'app-books',
@@ -29,14 +31,17 @@ export class BooksComponent implements OnInit, AfterViewInit {
   private oldSearchValue: string = '';
 
   public displayedColumns = ['title', 'author', 'publisher', 'isbn', 'actions'];
-  public dataSource: BookDataSourceService;
-  public selectedAuthorId: number = -1;
-  public selectedPublisherId: number = -1;
-  public bookCodebook: BookCodebookDto;
+  public selectedAuthorId: number;
+  public selectedPublisherId: number;
+  public authors: DropdownDto[];
+  public publishers: DropdownDto[];
 
-  constructor(private bookService: BookService) {
-    this.dataSource = new BookDataSourceService(this.bookService);
-  }
+  constructor(
+    private bookService: BookService,
+    private authorService: AuthorService,
+    private publisherService: PublisherService,
+    public dataSource: BookDataSourceService
+  ) {}
 
   ngOnInit(): void {
     this.getDropdownData();
@@ -89,10 +94,12 @@ export class BooksComponent implements OnInit, AfterViewInit {
   }
 
   private getDropdownData() {
-    this.bookService
-      .getBookCodebooks()
-      .subscribe(
-        (bookCodebook: BookCodebookDto) => (this.bookCodebook = bookCodebook)
-      );
+    forkJoin([
+      this.authorService.getAuthors(),
+      this.publisherService.getPublishers(),
+    ]).subscribe(([authors, publishers]) => {
+      this.authors = authors;
+      this.publishers = publishers;
+    });
   }
 }
