@@ -30,6 +30,18 @@
   </mat-select>
 </mat-form-field>
 
+<div role="presentation" style="display: flex; justify-content: end">
+  <a
+    mat-raised-button
+    color="primary"
+    routerLink="create"
+    style="margin-bottom: 1rem"
+  >
+    <mat-icon class="button-icon">create</mat-icon>
+    Create book
+  </a>
+</div>
+
 <table
   mat-table
   [dataSource]="dataSource"
@@ -52,13 +64,13 @@
   <!-- Author Column -->
   <ng-container matColumnDef="author">
     <th mat-header-cell *matHeaderCellDef>Author</th>
-    <td mat-cell *matCellDef="let book">{{ book.authorName }}</td>
+    <td mat-cell *matCellDef="let book">{{ book.author }}</td>
   </ng-container>
 
   <!-- Publisher Column -->
   <ng-container matColumnDef="publisher">
     <th mat-header-cell *matHeaderCellDef>Publisher</th>
-    <td mat-cell *matCellDef="let book">{{ book.publisherName }}</td>
+    <td mat-cell *matCellDef="let book">{{ book.publisher }}</td>
   </ng-container>
 
   <!-- Isbn Column -->
