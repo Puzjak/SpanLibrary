@@ -91,6 +91,9 @@
     <th mat-header-cell *matHeaderCellDef></th>
     <td mat-cell *matCellDef="let book">
       <button mat-button color="primary">Edit</button>
+      <button mat-button color="warn" (click)="onDeleteClick(book)">
+        Delete
+      </button>
     </td>
   </ng-container>
 

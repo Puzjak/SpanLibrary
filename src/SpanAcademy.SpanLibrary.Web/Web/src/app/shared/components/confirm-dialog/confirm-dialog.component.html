@@ -1,0 +1,17 @@
+<h1 mat-dialog-title>{{ data.title }}</h1>
+<div mat-dialog-content>
+  <p>{{ data.description }}</p>
+</div>
+<div mat-dialog-actions style="display: flex; justify-content: end">
+  <button mat-button (click)="onNegativeClick()">
+    {{ data.negativeText }}
+  </button>
+  <button
+    mat-button
+    color="primary"
+    (click)="onPositiveClick()"
+    cdkFocusInitial
+  >
+    {{ data.positiveText }}
+  </button>
+</div>

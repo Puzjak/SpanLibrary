@@ -14,6 +14,8 @@ import {
   fromEvent,
   map,
 } from 'rxjs';
+import { ConfirmDialogService } from '../shared/services/confirm-dialog.service';
+import { BookDto } from './models/bookDto';
 import { DropdownDto } from './models/dropdownDto';
 import { GetBooksDto } from './models/getBooksDto';
 import { AuthorService } from './services/author.service';
@@ -43,7 +45,8 @@ export class BooksComponent implements OnInit, AfterViewInit {
     private bookService: BookService,
     private authorService: AuthorService,
     private publisherService: PublisherService,
-    public dataSource: BookDataSourceService
+    public dataSource: BookDataSourceService,
+    private confirmDialogService: ConfirmDialogService
   ) {}
 
   ngOnInit(): void {
@@ -91,5 +94,18 @@ export class BooksComponent implements OnInit, AfterViewInit {
       this.authors = authors;
       this.publishers = publishers;
     });
+  }
+
+  onDeleteClick(book: BookDto) {
+    this.confirmDialogService.open(
+      'Deleting a book',
+      'Are you sure that you want to delete this book?',
+      () => {
+        this.bookService.deleteBook(book.id).subscribe((_) => {
+          console.log('Book deleted');
+          this.resetPaginationAndGetBooks();
+        });
+      }
+    );
   }
 }

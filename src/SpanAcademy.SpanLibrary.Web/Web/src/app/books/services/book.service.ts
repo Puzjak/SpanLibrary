@@ -41,4 +41,8 @@ export class BookService {
   createBook(book: CreateBookModel) {
     return this.httpClient.post<void>(`${this.serviceBaseUrl}`, book);
   }
+
+  deleteBook(id: number) {
+    return this.httpClient.delete<void>(`${this.serviceBaseUrl}/${id}`);
+  }
 }
