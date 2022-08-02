@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin } from 'rxjs';
+import { NotificationService } from 'src/app/shared/services/notification.service';
 import { CreateBookModel } from '../models/create-book.model';
 import { DropdownDto } from '../models/dropdownDto';
 import { AuthorService } from '../services/author.service';
@@ -28,7 +29,8 @@ export class CreateBookComponent implements OnInit {
     private fb: FormBuilder,
     private bookService: BookService,
     private router: Router,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit() {
@@ -65,7 +67,7 @@ export class CreateBookComponent implements OnInit {
     };
 
     this.bookService.createBook(createModel).subscribe((_) => {
-      console.log('Book successfully created');
+      this.notificationService.show('Book successfully created');
       this.router.navigate(['..'], { relativeTo: this.activatedRoute });
     });
   }
