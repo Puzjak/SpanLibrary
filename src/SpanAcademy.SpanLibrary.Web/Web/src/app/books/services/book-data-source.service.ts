@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { BookDto } from '../models/bookDto';
 import { BooksGridInfoDto } from '../models/booksGridInfoDto';
+import { GetBooksDto } from '../models/getBooksDto';
 import { BookService } from './book.service';
 
 @Injectable({
@@ -29,27 +30,18 @@ export class BookDataSourceService implements DataSource<BookDto> {
     this.noDataSubject.complete();
   }
 
-  public loadBooks(
-    sortOrder: string = '',
-    searchValue: string = '',
-    page: number = 1,
-    pageSize: number = 10,
-    authorId: number,
-    publisherId: number
-  ): void {
-    this.bookService
-      .getBooks(sortOrder, searchValue, page, pageSize, authorId, publisherId)
-      .subscribe({
-        next: (gridInfo: BooksGridInfoDto) => {
-          this.bookSubject.next(gridInfo.books);
-          this.totalCountSubject.next(gridInfo.totalCount);
-          this.noDataSubject.next(gridInfo.books.length == 0);
-        },
-        error: () => {
-          this.bookSubject.next([]);
-          this.totalCountSubject.next(0);
-          this.noDataSubject.next(true);
-        },
-      });
+  public loadBooks(getBooksDto: GetBooksDto): void {
+    this.bookService.getBooks(getBooksDto).subscribe({
+      next: (gridInfo: BooksGridInfoDto) => {
+        this.bookSubject.next(gridInfo.books);
+        this.totalCountSubject.next(gridInfo.totalCount);
+        this.noDataSubject.next(gridInfo.books.length == 0);
+      },
+      error: () => {
+        this.bookSubject.next([]);
+        this.totalCountSubject.next(0);
+        this.noDataSubject.next(true);
+      },
+    });
   }
 }

@@ -12,7 +12,10 @@
 
 <mat-form-field appearance="outline" style="margin: 0 10px">
   <mat-label>Author</mat-label>
-  <mat-select #author [(ngModel)]="selectedAuthorId">
+  <mat-select
+    [(ngModel)]="selectedAuthorId"
+    (selectionChange)="resetPaginationAndGetBooks()"
+  >
     <mat-option>--</mat-option>
     <mat-option *ngFor="let author of authors" [value]="author.id">
       {{ author.name }}
@@ -22,7 +25,10 @@
 
 <mat-form-field appearance="outline">
   <mat-label>Publisher</mat-label>
-  <mat-select #publisher [(ngModel)]="selectedPublisherId">
+  <mat-select
+    [(ngModel)]="selectedPublisherId"
+    (selectionChange)="resetPaginationAndGetBooks()"
+  >
     <mat-option>--</mat-option>
     <mat-option *ngFor="let publisher of publishers" [value]="publisher.id">
       {{ publisher.name }}
@@ -50,7 +56,8 @@
   matSortActive="title"
   matSortDirection="asc"
   matSortDisableClear="true"
-  style="width: 100%"
+  (matSortChange)="resetPaginationAndGetBooks()"
+  style="width: 100%; margin-bottom: 16px"
 >
   <!--- Note that these columns can be defined in any order.
         The actual rendered columns are set as a property on the row definition" -->
@@ -91,13 +98,14 @@
   <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
 </table>
 
+<div *ngIf="dataSource?.noData$ | async">No data</div>
+
 <mat-paginator
   [length]="dataSource?.totalCount$ | async"
   [pageSize]="10"
   [pageSizeOptions]="[5, 10, 25, 100]"
   [showFirstLastButtons]="true"
+  (page)="getBooks()"
   aria-label="Select page"
 >
 </mat-paginator>
-
-<div *ngIf="dataSource?.noData$ | async">No data</div>
