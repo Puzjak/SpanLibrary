@@ -6,12 +6,12 @@ namespace SpanAcademy.SpanLibrary.API.Models
     public class GetBooksResponseModel
     {
         public IEnumerable<BookDto> Books { get; private set; }
-        public int TotakCount { get; private set; }
+        public int TotalCount { get; private set; }
 
         public GetBooksResponseModel(IPagedList<BookDto> bookDtoPagedList)
         {
             Books = bookDtoPagedList;
-            TotakCount = bookDtoPagedList.TotalCount;
+            TotalCount = bookDtoPagedList.TotalCount;
         }
     }
 }
