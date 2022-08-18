@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SpanAcademy.SpanLibrary.Application.Persistence.Configurations;
 using SpanAcademy.SpanLibrary.Domain;
 
 namespace SpanAcademy.SpanLibrary.Application.Persistence
@@ -18,7 +19,7 @@ namespace SpanAcademy.SpanLibrary.Application.Persistence
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.ApplyConfigurationsFromAssembly(typeof(Book).Assembly);
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(BookEntityTypeConfiguration).Assembly);
         }
     }
 }
