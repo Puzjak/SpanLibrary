@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using SpanAcademy.SpanLibrary.Application.Books.Models;
 using SpanAcademy.SpanLibrary.Application.Collections;
 using SpanAcademy.SpanLibrary.Application.Persistence;
@@ -9,10 +10,12 @@ namespace SpanAcademy.SpanLibrary.Application.Books
     public class BookService : IBookService
     {
         private readonly SpanLibraryDbContext _context;
+        private readonly ILogger<BookService> _logger;
 
-        public BookService(SpanLibraryDbContext context)
+        public BookService(SpanLibraryDbContext context, ILogger<BookService> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         public async Task<bool> BookExists(int id, CancellationToken token)
@@ -22,6 +25,7 @@ namespace SpanAcademy.SpanLibrary.Application.Books
 
         public async Task<int> CreateBook(CreateBookDto book, CancellationToken token)
         {
+            book = null;
             ArgumentNullException.ThrowIfNull(book, nameof(book));
             Book bookToCreate = new()
             {
